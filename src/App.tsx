@@ -19,6 +19,7 @@ import PhotographyGraphic, { SUBJECTS } from "./PhotographyGraphic";
 
 import Telephoto from "./assets/100-400.png";
 import Fisheye from "./assets/fishey.png";
+import Translations from "./lang/Translations.tsx";
 
 const CIRCLES_OF_CONFUSION: Record<
   string,
@@ -114,6 +115,10 @@ function clamp(value: number, min: number, max: number) {
 }
 
 function App() {
+  const [language, setLanguage] = useState("en");
+  const t = (key: string) => {
+    return Translations[language][key];
+  };
   const [distanceToSubjectInInches, setDistanceToSubjectInInches] =
     useState(72);
   const [focalLengthInMillimeters, setFocalLengthInMillimeters] = useState(50);
@@ -176,6 +181,7 @@ function App() {
         }));
     } else {
       const farDistanceInMeters = farDistanceInInches * 0.0254;
+      // eslint-disable-next-line no-inner-declarations
       function convertMetersToInches(meters: number) {
         return meters * 39.3701;
       }
@@ -206,35 +212,34 @@ function App() {
         />
       </Box>
 
-      <Box px={6}>
         <Box pt={6}>
-          <Flex gap={2}>
-            <Box w="20%">
-              <Text align="right">Units</Text>
-            </Box>
+        <Flex gap={2}>
+          <Box w="20%">
+            <Text align="right">{t("units")}</Text>
+          </Box>
 
-            <Box flexGrow={1}>
-              <RadioGroup
+          <Box flexGrow={1}>
+            <RadioGroup
                 onChange={(v) => setSystem(v as "Imperial" | "Metric")}
                 value={system}
-              >
-                <Stack direction="row">
-                  {SYSTEMS.map((system) => (
+            >
+              <Stack direction="row">
+                {SYSTEMS.map((system) => (
                     <Radio value={system} key={system}>
-                      {system}
+                      {t(system.toLowerCase())}
                     </Radio>
-                  ))}
-                </Stack>
-              </RadioGroup>
-            </Box>
-          </Flex>
-        </Box>
+                ))}
+              </Stack>
+            </RadioGroup>
+          </Box>
+        </Flex>
+      </Box>
 
         <Box pt={6}>
           <Flex gap={2}>
             <Box w="20%">
               <Text align="right">
-                Subject Distance ({system === "Imperial" ? "ft" : "m"})
+                {t("subjectDistance")} ({system === "Imperial" ? t("ft") : t("m")})
               </Text>
             </Box>
             <Box flexGrow={1}>
@@ -401,13 +406,17 @@ function App() {
         <Box p={4} pt={6}>
           <Flex gap={5} justify="center">
             <a href="https://github.com/jherr/depth-of-field" target="_blank">
-              Contribute to this open source project on GitHub.
+              {t("contribute")}
             </a>
           </Flex>
         </Box>
-      </Box>
-    </>
+        <Box p={4}>
+          <Button onClick={() => setLanguage(language === "en" ? "zh" : "en")}>
+            Switch to {language === "en" ? "中文" : "English"}
+          </Button>
+        </Box>
+  </>
   );
-}
+  }
 
 export default App;
